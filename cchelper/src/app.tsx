@@ -3,21 +3,32 @@ import { ClientInfo } from "./types";
 import { ClientModal } from "./components/ClientModal";
 import { useMemo, useState } from "react";
 import { Input } from "./components/common/Input";
-
-const clients = [{ name: "Mario Rossi" }, { name: "Luigi Verdi" }];
+import { useClientStore } from "./store/clientStore";
+import { shallow } from "zustand/shallow";
 
 const App = () => {
+  const { clients } = useClientStore(({ clients }) => ({ clients }), shallow);
   const methods = useForm<ClientInfo>();
-  const [selectedClient, setSelectedClient] = useState<string>();
+  const [selectedClient, setSelectedClient] = useState<Partial<ClientInfo>>();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const filteredClients = useMemo(() => {
+    if (!clients) {
+      return [];
+    }
     return clients.filter((client) => client.name.includes(searchFilter));
-  }, [searchFilter]);
+  }, [searchFilter, clients]);
 
   return (
     <div className="w-full h-full justify-center">
       <FormProvider {...methods}>
         <div className="flex flex-col max-w-[500px] border-[1px] border-[blue]">
+          <button
+            onClick={() => {
+              setSelectedClient({});
+            }}
+          >
+            Aggiungi cliente
+          </button>
           <Input
             label="Cerca cliente"
             placeholder="Nome, cognome o numero"
@@ -27,7 +38,10 @@ const App = () => {
           />
           {filteredClients.map((client) => {
             return (
-              <div onClick={() => setSelectedClient(client.name)}>
+              <div
+                className="cursor-pointer"
+                onClick={() => setSelectedClient(client)}
+              >
                 {client.name}
               </div>
             );

@@ -2,9 +2,23 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "./common/Input";
 import { ClientInfo } from "../types";
 import { FC } from "react";
+import { useClientStore } from "../store/clientStore";
+import { shallow } from "zustand/shallow";
 
 export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
   const { register, handleSubmit } = useFormContext<ClientInfo>();
+  const { clients, setClients } = useClientStore(
+    ({ clients, setClients }) => ({ clients, setClients }),
+    shallow
+  );
+  const onSubmit = (data: ClientInfo) => {
+    console.log(data);
+    const newClients = clients?.filter(
+      ({ fiscalCode }) => fiscalCode !== data.fiscalCode
+    );
+    setClients([...(newClients ?? []), data]);
+  };
+
   return (
     <div className="absolute top-0 left-0 w-full h-full z-5 bg-[white]">
       <div
@@ -17,7 +31,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
       </div>
       <form
         className="flex flex-col w-full h-full items-center border-[1px] border-[green] gap-y-[5px]"
-        onSubmit={handleSubmit((data) => console.log(data))}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Input
           label="Nome intestatario / Ragione sociale"
@@ -92,7 +106,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
           label="Cellulare (se vuole device)"
           {...register("requestedDevice")}
         />
-        <button>Submit</button>
+        <button>Salva cliente</button>
       </form>
     </div>
   );
