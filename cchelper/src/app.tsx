@@ -16,7 +16,11 @@ const App = () => {
     if (!clients) {
       return [];
     }
-    return clients.filter((client) => client.name.includes(searchFilter));
+    return clients.filter(
+      (client) =>
+        client.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        client.phone?.includes(searchFilter)
+    );
   }, [searchFilter, clients]);
 
   return (
