@@ -18,11 +18,10 @@ const App = () => {
     }
     return clients.filter((client) => client.name.includes(searchFilter));
   }, [searchFilter, clients]);
-
   return (
     <div className="flex w-full h-full justify-center">
       <FormProvider {...methods}>
-        <div className="flex flex-col w-full max-w-[500px] border-[1px] border-[blue]">
+        <div className="flex flex-col w-full max-w-[500px] border-[1px] border-[blue] items-center gap-y-[10px]">
           <Button
             onClick={() => {
               setClientModalOpen(true);
