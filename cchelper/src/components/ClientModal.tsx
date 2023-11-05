@@ -1,11 +1,16 @@
 import { FC } from "react";
-import { SubmitHandler, useFormContext } from "react-hook-form";
+import {
+  SubmitErrorHandler,
+  SubmitHandler,
+  useFormContext,
+} from "react-hook-form";
 import { shallow } from "zustand/shallow";
 import { useClientStore } from "../store/client-store";
 import { ClientInfo } from "../types";
 import { Button } from "./common/Button";
 import { Input } from "./common/Input";
 import { Accordion } from "./form/Accordion";
+import { useToast } from "../hooks/useToast";
 
 export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
   const {
@@ -17,26 +22,27 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
     ({ clients, setClients }) => ({ clients, setClients }),
     shallow
   );
+  const showToast = useToast();
 
   const onSubmit: SubmitHandler<ClientInfo> = (data) => {
-    console.log(data);
     const newClients = clients?.filter(
       ({ fiscalCode }) => fiscalCode !== data.fiscalCode
     );
     setClients([...(newClients ?? []), data]);
+    showToast({ message: "CLIENTE SALVATO" });
   };
 
-  /*   const onError: SubmitErrorHandler<ClientInfo> = (data) => {
-        if (data.fiscalCode.) {
-      setError("fiscalCode", )
-    } 
-  }; */
+  const onError: SubmitErrorHandler<ClientInfo> = (data) => {
+    if (data.fiscalCode) {
+      showToast({ message: "INSERIRE CODICE FISCALE", type: "error" });
+    }
+  };
 
   return (
     <div className="absolute top-0 left-0 w-full h-full z-5 bg-blue-100 ">
       <form
         className="relative flex flex-col max-w-full h-full "
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit, onError)}
       >
         <div className="fixed bg-white border-b border-blue-800 flex w-full cursor-pointer justify-end pr-[30px] gap-[10px] py-[10px]">
           <Button>Salva cliente</Button>
@@ -49,28 +55,6 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
             label="Nome intestatario / Ragione sociale"
             {...register("name")}
           />
-          {/* <div className="flex flex-col gap-x-[5px] border border-black p-[5px] gap-y-[5px] ">
-            <span className="text-[18px]">Carta d'identità</span>
-            <div className="flex flex-row gap-x-[5px]">
-              <Input label="Numero" {...register("id.number")} />
-              <Input
-                type="date"
-                label="Data di rilascio"
-                {...register("id.releaseDate")}
-              />
-            </div>
-            <div className="flex flex-row gap-x-[5px]">
-              <Input
-                label="Data di scadenza"
-                {...register("id.expirationDate")}
-                type="date"
-              />
-              <Input
-                label="Comune di rilascio"
-                {...register("id.municipality")}
-              />
-            </div>
-          </div> */}
           <Accordion title="Carta d'identità">
             <div className="flex flex-row gap-x-[5px]">
               <Input label="Numero" {...register("id.number")} />

@@ -1,4 +1,5 @@
 import { FC, HTMLAttributes, useState } from "react";
+import { cn } from "../../utils";
 
 export const Accordion: FC<
   HTMLAttributes<HTMLDivElement> & { title: string }
@@ -7,7 +8,10 @@ export const Accordion: FC<
   return (
     <div
       {...props}
-      className="flex flex-col gap-x-[5px] border border-black p-[5px] gap-y-[5px] "
+      className={cn(
+        "flex flex-col gap-x-[5px] border-black gap-y-[5px]",
+        open ? "" : "border-b"
+      )}
     >
       <div
         className="flex flex-row justify-between cursor-pointer "
@@ -20,7 +24,11 @@ export const Accordion: FC<
           {open ? "Chiudi" : "Apri"}
         </span>
       </div>
-      {open && children}
+      {open && (
+        <div className="flex flex-col border border-black py-[5px] px-[5px] w-full">
+          {children}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { InputHTMLAttributes, forwardRef } from "react";
 import { FieldError } from "react-hook-form";
+import { cn } from "../../utils";
 
 export const Input = forwardRef<
   HTMLInputElement,
@@ -16,7 +17,10 @@ export const Input = forwardRef<
         <input
           {...props}
           ref={ref}
-          className="border-[1px] rounded-[4px] min-w-[200px] w-fit text-[18px] flex-[1]"
+          className={cn(
+            "border rounded-[4px] min-w-[200px] w-fit text-[18px] flex-[1] outline-none",
+            !error ? "" : "border-red"
+          )}
         />
       </div>
       {error && <span className="text-[red]">{error?.message}</span>}
