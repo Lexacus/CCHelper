@@ -1,21 +1,15 @@
-import {
-  SubmitErrorHandler,
-  SubmitHandler,
-  useFormContext,
-} from "react-hook-form";
-import { Input } from "./common/Input";
-import { ClientInfo } from "../types";
-import { FC, useEffect } from "react";
-import { useClientStore } from "../store/clientStore";
+import { FC } from "react";
+import { SubmitHandler, useFormContext } from "react-hook-form";
 import { shallow } from "zustand/shallow";
+import { useClientStore } from "../store/clientStore";
+import { ClientInfo } from "../types";
 import { Button } from "./common/Button";
+import { Input } from "./common/Input";
 
 export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
   const {
     register,
     handleSubmit,
-    reset,
-    setError,
     formState: { errors },
   } = useFormContext<ClientInfo>();
   const { clients, setClients } = useClientStore(
@@ -31,11 +25,11 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
     setClients([...(newClients ?? []), data]);
   };
 
-  const onError: SubmitErrorHandler<ClientInfo> = (data) => {
-    /*     if (data.fiscalCode.) {
+  /*   const onError: SubmitErrorHandler<ClientInfo> = (data) => {
+        if (data.fiscalCode.) {
       setError("fiscalCode", )
-    } */
-  };
+    } 
+  }; */
 
   return (
     <div className="absolute top-0 left-0 w-full h-full z-5 bg-[white] ">

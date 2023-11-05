@@ -1,4 +1,4 @@
-import { HTMLAttributes, InputHTMLAttributes, forwardRef } from "react";
+import { InputHTMLAttributes, forwardRef } from "react";
 import { FieldError } from "react-hook-form";
 
 export const Input = forwardRef<
