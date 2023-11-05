@@ -5,11 +5,12 @@ import { useMemo, useState } from "react";
 import { Input } from "./components/common/Input";
 import { useClientStore } from "./store/clientStore";
 import { shallow } from "zustand/shallow";
+import { Button } from "./components/common/Button";
 
 const App = () => {
   const { clients } = useClientStore(({ clients }) => ({ clients }), shallow);
+  const [clientModalOpen, setClientModalOpen] = useState<boolean>(false);
   const methods = useForm<ClientInfo>();
-  const [selectedClient, setSelectedClient] = useState<Partial<ClientInfo>>();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const filteredClients = useMemo(() => {
     if (!clients) {
@@ -19,16 +20,17 @@ const App = () => {
   }, [searchFilter, clients]);
 
   return (
-    <div className="w-full h-full justify-center">
+    <div className="flex w-full h-full justify-center">
       <FormProvider {...methods}>
-        <div className="flex flex-col max-w-[500px] border-[1px] border-[blue]">
-          <button
+        <div className="flex flex-col w-full max-w-[500px] border-[1px] border-[blue]">
+          <Button
             onClick={() => {
-              setSelectedClient({});
+              setClientModalOpen(true);
+              methods.reset();
             }}
           >
             Aggiungi cliente
-          </button>
+          </Button>
           <Input
             label="Cerca cliente"
             placeholder="Nome, cognome o numero"
@@ -40,17 +42,21 @@ const App = () => {
             return (
               <div
                 className="cursor-pointer"
-                onClick={() => setSelectedClient(client)}
+                onClick={() => {
+                  console.log(client);
+                  setClientModalOpen(true);
+                  methods.reset(client);
+                }}
               >
                 {client.name}
               </div>
             );
           })}
         </div>
-        {selectedClient && (
+        {clientModalOpen && (
           <ClientModal
             onClose={() => {
-              setSelectedClient(undefined);
+              setClientModalOpen(false);
             }}
           />
         )}
