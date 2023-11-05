@@ -1,10 +1,16 @@
 import { FC } from "react";
-import { SubmitHandler, useFormContext } from "react-hook-form";
+import {
+  SubmitErrorHandler,
+  SubmitHandler,
+  useFormContext,
+} from "react-hook-form";
 import { shallow } from "zustand/shallow";
-import { useClientStore } from "../store/clientStore";
+import { useClientStore } from "../store/client-store";
 import { ClientInfo } from "../types";
 import { Button } from "./common/Button";
 import { Input } from "./common/Input";
+import { Accordion } from "./form/Accordion";
+import { useToast } from "../hooks/useToast";
 
 export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
   const {
@@ -16,26 +22,27 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
     ({ clients, setClients }) => ({ clients, setClients }),
     shallow
   );
+  const showToast = useToast();
 
   const onSubmit: SubmitHandler<ClientInfo> = (data) => {
-    console.log(data);
     const newClients = clients?.filter(
       ({ fiscalCode }) => fiscalCode !== data.fiscalCode
     );
     setClients([...(newClients ?? []), data]);
+    showToast({ message: "CLIENTE SALVATO" });
   };
 
-  /*   const onError: SubmitErrorHandler<ClientInfo> = (data) => {
-        if (data.fiscalCode.) {
-      setError("fiscalCode", )
-    } 
-  }; */
+  const onError: SubmitErrorHandler<ClientInfo> = (data) => {
+    if (data.fiscalCode) {
+      showToast({ message: "INSERIRE CODICE FISCALE", type: "error" });
+    }
+  };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full z-5 bg-[white] ">
+    <div className="absolute top-0 left-0 w-full h-full z-5 bg-blue-100 ">
       <form
         className="relative flex flex-col max-w-full h-full "
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit, onError)}
       >
         <div className="fixed bg-white border-b border-blue-800 flex w-full cursor-pointer justify-end pr-[30px] gap-[10px] py-[10px]">
           <Button>Salva cliente</Button>
@@ -43,13 +50,12 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
             Chiudi
           </Button>
         </div>
-        <div className="flex flex-col flex-wrap w-full h-[100%] pb-[20px] items-center gap-y-[5px] mt-[50px]">
+        <div className="flex flex-col flex-wrap w-full h-[100%] pb-[20px] items-left gap-y-[5px] mt-[50px] px-[20px]">
           <Input
             label="Nome intestatario / Ragione sociale"
             {...register("name")}
           />
-          <div className="flex flex-col gap-x-[5px] border-[1px] p-[5px] ">
-            <span className="text-[18px]">Carta d'identità</span>
+          <Accordion title="Carta d'identità">
             <div className="flex flex-row gap-x-[5px]">
               <Input label="Numero" {...register("id.number")} />
               <Input
@@ -69,7 +75,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
                 {...register("id.municipality")}
               />
             </div>
-          </div>
+          </Accordion>
           <Input
             label="Codice fiscale"
             {...register("fiscalCode", { required: true })}
@@ -101,8 +107,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
             label="Numero da portare in TIM"
             {...register("portabilityNumber")}
           />
-          <div className="flex flex-col gap-x-[5px] border-[1px] p-[5px] ">
-            <span className="text-[18px]">Informazioni intestatario SIM</span>
+          <Accordion title="Informazioni intestatario SIM">
             <div className="flex flex-row gap-x-[5px]">
               <Input
                 label="Gestore/Intestatario SIM"
@@ -132,7 +137,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
                 {...register("simInfo.id.municipality")}
               />
             </div>
-          </div>
+          </Accordion>
           <Input label="Copertura" {...register("coverage")} />
           <Input label="Offerta" {...register("offer")} />
           <Input

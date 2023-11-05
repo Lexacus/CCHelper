@@ -30,3 +30,5 @@ export type ClientInfo = {
   offer: string;
   requestedDevice: string;
 };
+
+export type Toast = { message: string; type?: "error" | "success" };
