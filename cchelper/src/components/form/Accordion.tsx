@@ -15,8 +15,10 @@ export const Accordion: FC<
           setOpen((prev) => !prev);
         }}
       >
-        <span className="text-[18px]">{title}</span>
-        <span className="text-[18px]">{open ? "Chiudi" : "Apri"}</span>
+        <span className="text-[18px] font-medium">{title}</span>
+        <span className="text-[18px] font-medium">
+          {open ? "Chiudi" : "Apri"}
+        </span>
       </div>
       {open && children}
     </div>

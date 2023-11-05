@@ -6,7 +6,7 @@ export const Input = forwardRef<
   InputHTMLAttributes<HTMLInputElement> & { label?: string; error?: FieldError }
 >(({ label, error, ...props }, ref) => {
   return (
-    <div className="flex flex-col items-center gap-x-[5px] w-fit min-w-[40%]">
+    <div className="flex flex-col items-center gap-x-[5px] w-fit min-w-[50%]">
       <div className="flex flex-row gap-x-[5px] w-full">
         {label && (
           <span className="text-[18px] font-medium flex-[1] whitespace-nowrap">
