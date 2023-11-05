@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
 import { shallow } from "zustand/shallow";
-import { useClientStore } from "../store/clientStore";
+import { useClientStore } from "../store/client-store";
 import { ClientInfo } from "../types";
 import { Button } from "./common/Button";
 import { Input } from "./common/Input";
+import { Accordion } from "./form/Accordion";
 
 export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
   const {
@@ -32,7 +33,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
   }; */
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full z-5 bg-[white] ">
+    <div className="absolute top-0 left-0 w-full h-full z-5 bg-blue-100 ">
       <form
         className="relative flex flex-col max-w-full h-full "
         onSubmit={handleSubmit(onSubmit)}
@@ -43,12 +44,12 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
             Chiudi
           </Button>
         </div>
-        <div className="flex flex-col flex-wrap w-full h-[100%] pb-[20px] items-center gap-y-[5px] mt-[50px]">
+        <div className="flex flex-col flex-wrap w-full h-[100%] pb-[20px] items-left gap-y-[5px] mt-[50px] px-[20px]">
           <Input
             label="Nome intestatario / Ragione sociale"
             {...register("name")}
           />
-          <div className="flex flex-col gap-x-[5px] border-[1px] p-[5px] ">
+          {/* <div className="flex flex-col gap-x-[5px] border border-black p-[5px] gap-y-[5px] ">
             <span className="text-[18px]">Carta d'identità</span>
             <div className="flex flex-row gap-x-[5px]">
               <Input label="Numero" {...register("id.number")} />
@@ -69,7 +70,28 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
                 {...register("id.municipality")}
               />
             </div>
-          </div>
+          </div> */}
+          <Accordion title="Carta d'identità">
+            <div className="flex flex-row gap-x-[5px]">
+              <Input label="Numero" {...register("id.number")} />
+              <Input
+                type="date"
+                label="Data di rilascio"
+                {...register("id.releaseDate")}
+              />
+            </div>
+            <div className="flex flex-row gap-x-[5px]">
+              <Input
+                label="Data di scadenza"
+                {...register("id.expirationDate")}
+                type="date"
+              />
+              <Input
+                label="Comune di rilascio"
+                {...register("id.municipality")}
+              />
+            </div>
+          </Accordion>
           <Input
             label="Codice fiscale"
             {...register("fiscalCode", { required: true })}
@@ -101,8 +123,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
             label="Numero da portare in TIM"
             {...register("portabilityNumber")}
           />
-          <div className="flex flex-col gap-x-[5px] border-[1px] p-[5px] ">
-            <span className="text-[18px]">Informazioni intestatario SIM</span>
+          <Accordion title="Informazioni intestatario SIM">
             <div className="flex flex-row gap-x-[5px]">
               <Input
                 label="Gestore/Intestatario SIM"
@@ -132,7 +153,7 @@ export const ClientModal: FC<{ onClose: () => void }> = ({ onClose }) => {
                 {...register("simInfo.id.municipality")}
               />
             </div>
-          </div>
+          </Accordion>
           <Input label="Copertura" {...register("coverage")} />
           <Input label="Offerta" {...register("offer")} />
           <Input
